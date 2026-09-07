@@ -100,8 +100,11 @@
   /* ---------- hero ---------- */
   const hero = $('#hero'), heroVideo = $('.hero__video');
   if (heroVideo) {
-    if (reduce) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); }
-    else heroVideo.play().catch(() => {});
+    /* sources attach after load so the poster wins LCP and the loop streams in behind it */
+    const attach = () => { $$('source[data-src]', heroVideo).forEach(s => { s.src = s.dataset.src; }); heroVideo.load(); heroVideo.play().catch(() => {}); };
+    if (reduce) heroVideo.removeAttribute('autoplay');
+    else if (document.readyState === 'complete') attach();
+    else window.addEventListener('load', () => setTimeout(attach, 120));
   }
   const tc = $('.hud__tc');
   if (tc) {
