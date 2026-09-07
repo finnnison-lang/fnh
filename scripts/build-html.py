@@ -27,7 +27,7 @@ for col in cols:
     items=[]
     for s in col:
         de,en=clips_meta[s]; d=durs[s]
-        items.append(f'''<figure class="clip" data-src="assets/video/{s}.mp4" data-poster="assets/video/{s}.jpg" data-title="{e(de)}" data-title-en="{e(en)}" data-cursor="PLAY" tabindex="0" role="button" aria-label="{e(de)}" data-en-label="{e(en)}">
+        items.append(f'''<figure class="clip" data-src="assets/video/{s}.mp4" data-poster="assets/video/{s}.jpg" data-title="{e(de)}" data-title-en="{e(en)}" data-cursor="PLAY" tabindex="0" role="button">
   <img src="assets/video/{s}.jpg" alt="" loading="lazy" width="540" height="960">
   <video muted loop playsinline preload="none" poster="assets/video/{s}.jpg"><source src="assets/video/{s}.mp4" type="video/mp4"></video>
   <span class="clip__play" aria-hidden="true"></span>
@@ -50,7 +50,7 @@ films=[
  ("parallax","2.5D","Parallax-Animation · 2024 · 0:05","Parallax animation · 2024 · 0:05",
   "Ein Foto, in Ebenen zerlegt und wieder in Bewegung gesetzt.","One photo, cut into layers and set back in motion."),
 ]
-FILMS="\n".join(f'''<article class="film-row" data-src="assets/film/{s}.mp4" data-poster="assets/film/{s}.jpg" data-title="{e(t)}" data-cursor="PLAY" data-cursor-en="PLAY" tabindex="0" role="button" aria-label="{e(t)} abspielen" data-en-label="Play {e(t)}">
+FILMS="\n".join(f'''<article class="film-row" data-src="assets/film/{s}.mp4" data-poster="assets/film/{s}.jpg" data-title="{e(t)}" data-cursor="PLAY" data-cursor-en="PLAY" tabindex="0" role="button">
   <div class="film-row__text" data-reveal>
     <div class="film-row__num">0{i+1}</div>
     <h3 class="film-row__title">{e(t)}</h3>
@@ -86,7 +86,7 @@ PH=[]
 for s in order:
     w,h=dims[s]; tw=900; th=round(h*tw/w) if w>=h else 900; tw=900 if w>=h else round(w*900/h)
     de,en=caps[s]; cat=catmap[s]; speed=round(random.uniform(0.9,1.1),3)
-    PH.append(f'''<figure class="ph" data-cat="{cat}" data-full="assets/photo/{s}.jpg" data-title="{e(de)}" data-title-en="{e(en)}" data-speed="{speed}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button" aria-label="{e(de)}" data-en-label="{e(en)}">
+    PH.append(f'''<figure class="ph" data-cat="{cat}" data-full="assets/photo/{s}.jpg" data-title="{e(de)}" data-title-en="{e(en)}" data-speed="{speed}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button">
   <img src="assets/photo/{s}-t.jpg" alt="{e(de)}" data-en-alt="{e(en)}" loading="lazy" width="{tw}" height="{th}">
   <figcaption class="ph__cap"><span data-en="{e(en)}">{e(de)}</span><span data-en="{e(cats[cat][1])}">{e(cats[cat][0])}</span></figcaption>
 </figure>''')
@@ -99,7 +99,7 @@ design=[("ayvo","Ayvo","Packaging","Packaging"),("lazi-kampagne","LAZI Akademie"
  ("wwf","WWF","Kampagne, Konzept","Campaign, concept"),("schwamminator","Schwamminator","Plakat, Konzept","Poster, concept"),("filmplakat","Between Hits and Heartache","Filmplakat","Film poster"),
  ("duracell","Duracell","Anzeige, Konzept","Ad, concept"),("ellipse","Kunst des Weglassens","Anzeige, Konzept","Ad, concept"),("ayvo-tube","Ayvo Tube","Packaging","Packaging"),
  ("typo-light","Bild & Typografie","Typografie","Typography"),("icons","Icon-Set","Goldener Schnitt","Golden ratio")]
-DESIGN="\n".join(f'''<figure class="dcard{' dcard--wide' if ddims[s][0]>ddims[s][1]*1.15 else ''}" data-full="assets/design/{s}.jpg" data-title="{e(t)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button" aria-label="{e(t)}, {e(kde)}" data-en-label="{e(t)}, {e(ken)}" data-reveal>
+DESIGN="\n".join(f'''<figure class="dcard{' dcard--wide' if ddims[s][0]>ddims[s][1]*1.15 else ''}" data-full="assets/design/{s}.jpg" data-title="{e(t)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button" data-reveal>
   <div class="dcard__inner"><img src="assets/design/{s}-t.jpg" alt="{e(t)}, {e(kde)}" data-en-alt="{e(t)}, {e(ken)}" loading="lazy" width="{ddims[s][0]}" height="{ddims[s][1]}"></div>
   <figcaption class="dcard__cap"><b>{e(t)}</b><span data-en="{e(ken)}">{e(kde)}</span></figcaption>
 </figure>''' for s,t,kde,ken in design)
