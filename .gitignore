@@ -3,4 +3,5 @@ tools/fonts/
 tools/masters/
 tools/lh-*.json
 tools/package-lock.json
+tools/race-concat.txt
 .DS_Store
