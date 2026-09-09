@@ -80,8 +80,8 @@
   "( Photography )"
  ],
  "photo_stmt": [
-  "Island, Seychellen, ein Studio in Stuttgart. Licht, das Charakter zeigt.",
-  "Iceland, the Seychelles, a studio in Stuttgart. Light that shows character."
+  "Island, Seychellen, Prag, New York und ein Studio in Stuttgart. Licht, das Charakter zeigt.",
+  "Iceland, the Seychelles, Prague, New York and a studio in Stuttgart. Light that shows character."
  ],
  "design_label": [
   "( Design )",
@@ -96,8 +96,8 @@
   "( The studio )"
  ],
  "studio_text": [
-  "FNH ist ein Ein-Mann-Studio in der Region Stuttgart. Ausgebildet an der LAZI Akademie in Film, Foto, Grafik, Medien und Design. Ich drehe, fotografiere, gestalte und lasse die Maschine den Rest träumen.",
-  "FNH is a one-person studio in the Stuttgart region. Trained at the LAZI Akademie in film, photography, graphics, media and design. I shoot, photograph, design and let the machine dream the rest."
+  "FNH ist Finn Nison Hafemann, freier Fotograf und Student an der LAZI Akademie Stuttgart/Esslingen. Fotografie, Video und Film, KI-Content und Mediendesign. Seine Bilder werden über iStock und Getty Images lizenziert.",
+  "FNH is Finn Nison Hafemann, freelance photographer and student at the LAZI Akademie Stuttgart/Esslingen. Photography, video and film, AI content and media design. His images are licensed through iStock and Getty Images."
  ],
  "studio_stmt": [
   "Kamera zuerst. Maschine danach.",
@@ -126,5 +126,57 @@
  "series_stmt": [
   "Städte im Maßstab, die FNH-Crew im Bild, und jedes Mal geht etwas schief.",
   "Cities built to scale, the FNH crew in shot, and every time something goes wrong."
+ ],
+ "gear_cam": [
+  "Kameras",
+  "Cameras"
+ ],
+ "gear_cam_v": [
+  "Canon EOS R5 · R5 Mark II · Sony FX3",
+  "Canon EOS R5 · R5 Mark II · Sony FX3"
+ ],
+ "gear_lens": [
+  "Objektive",
+  "Lenses"
+ ],
+ "gear_lens_v": [
+  "Canon RF, 15 bis 300 mm, Festbrennweiten und Zooms",
+  "Canon RF, 15 to 300 mm, primes and zooms"
+ ],
+ "gear_air": [
+  "Luft",
+  "Air"
+ ],
+ "gear_air_v": [
+  "DJI Mavic 3 Pro · FPV · Neo II · Ronin RS4 Pro II",
+  "DJI Mavic 3 Pro · FPV · Neo II · Ronin RS4 Pro II"
+ ],
+ "gear_post": [
+  "Post",
+  "Post"
+ ],
+ "gear_post_v": [
+  "Photoshop · Premiere · DaVinci Resolve · After Effects · Seedance",
+  "Photoshop · Premiere · DaVinci Resolve · After Effects · Seedance"
+ ],
+ "gear_cert": [
+  "Zertifikate",
+  "Certificates"
+ ],
+ "gear_cert_v": [
+  "EU-Drohnenpilot A1/A3/A2 · cimdata Videoschnitt",
+  "EU remote drone pilot A1/A3/A2 · cimdata video editing"
+ ],
+ "gear_base": [
+  "Basis",
+  "Base"
+ ],
+ "gear_base_v": [
+  "Stuttgart · Esslingen · Reutlingen",
+  "Stuttgart · Esslingen · Reutlingen"
+ ],
+ "studio_portrait_cap": [
+  "Nachtporträt",
+  "Night portrait"
  ]
 }

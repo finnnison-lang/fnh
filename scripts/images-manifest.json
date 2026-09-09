@@ -233,6 +233,12 @@
    "cat": "portrait",
    "w": 1500,
    "h": 1001
+  },
+  {
+   "slug": "studio-portrait",
+   "cat": "portrait",
+   "w": 800,
+   "h": 1000
   }
  ],
  "design": [
