@@ -1,34 +1,27 @@
-# v2 generator: assembles site/index.html from the template plus chapters, index rows, photos and design.
-import json, html
+# v3 generator: template + copy.json + media lists -> site/index.html
+import json, html, re
 ROOT="/Volumes/Macintosh HD II/AI/FNH WEB"; e=html.escape
-man=json.load(open(f"{ROOT}/scripts/images-manifest.json")); dims={p["slug"]:(p["w"],p["h"]) for p in man["photo"]}; ddims={d["slug"]:(d["w"],d["h"]) for d in man["design"]}
-# ---- chapters (slug, vertical, title DE, title EN, meta DE, meta EN, desc DE, desc EN)
-chapters=[
- ("race",0,"Nürburgring 24h","Nürburgring 24h","AI Film · 2026 · 1:30","AI film · 2026 · 1:30","Ein Fahrer im FNH-Anzug, Boxengasse bei Nacht, Flutlicht, Regen und die Nordschleife. Drei Teile, komplett generiert.","A driver in the FNH suit, pit lane at night, floodlights, rain and the Nordschleife. Three parts, fully generated."),
- ("odyssai",0,"OdyssAI <span class=\"serif\">2028</span>","OdyssAI <span class=\"serif\">2028</span>","Abschlussfilm · 2026 · 8:00","Graduation film · 2026 · 8:00","Ein Abteilungsleiter baut die KI, die ihn ersetzt. Acht Minuten, fast vollständig generiert, geschnitten wie ein Kinofilm. Hier der Trailer.","A department head builds the AI that replaces him. Eight minutes, almost entirely generated, cut like a feature. Trailer here."),
- ("iceland",0,"Island, <span class=\"serif\">Feuer und Eis</span>","Iceland, <span class=\"serif\">Fire and Ice</span>","Film · 2022 · 3:21","Film · 2022 · 3:21","Lava, Gletscher, Nordlicht. Gedreht mit Canon R5, Mavic 3 und FPV, geschnitten von Hand.","Lava, glaciers, aurora. Shot on Canon R5, Mavic 3 and FPV, cut by hand."),
- ("kuppelkino",1,"Kuppelkino <span class=\"serif\">Stuttgart</span>","Dome cinema <span class=\"serif\">Stuttgart</span>","AI Film · 2026 · 0:11","AI film · 2026 · 0:11","Die Welle zerlegt den Hauptbahnhof, der Turm kippt, die Leinwand splittert. 3,4 Millionen Aufrufe.","The wave takes the central station apart, the tower tips, the screen shatters. 3.4 million views."),
- ("redbull",1,"Oma und die <span class=\"serif\">Red-Bull-Wand</span>","Grandma and the <span class=\"serif\">Red Bull wall</span>","AI Film · 2026 · 0:15","AI film · 2026 · 0:15","Eine Überwachungskamera, ein Einkaufswagen, eine Wand aus Dosen. 4,3 Millionen Aufrufe.","A security camera, a shopping cart, a wall of cans. 4.3 million views."),
- ("cymatics",0,"Cymatics","Cymatics","Kurzfilm · 2025 · 4:33","Short film · 2025 · 4:33","Where sound meets vision. Wasser, Sand und Klang, gefilmt statt gerendert.","Where sound meets vision. Water, sand and sound, filmed rather than rendered."),
- ("singapur",1,"Studio <span class=\"serif\">Singapur</span>","Studio <span class=\"serif\">Singapore</span>","AI Film · 2026 · 0:12","AI film · 2026 · 0:12","Miniatur-Marina-Bay, FNH-Crew von hinten, Einschlag. 1,4 Millionen Aufrufe.","Miniature Marina Bay, FNH crew from behind, impact. 1.4 million views."),
- ("husky",1,"Husky, <span class=\"serif\">Wasserpistole</span>","Husky, <span class=\"serif\">water pistol</span>","AI Film · 2026 · 0:12","AI film · 2026 · 0:12","Vier Welpen, drei fallen brav um, der vierte macht eine Oper daraus. 737.000 Aufrufe.","Four puppies, three fall over obediently, the fourth turns it into an opera. 737,000 views."),
+C=json.load(open(f"{ROOT}/scripts/copy.json")); man=json.load(open(f"{ROOT}/scripts/images-manifest.json"))
+dims={p["slug"]:(p["w"],p["h"]) for p in man["photo"]}; ddims={d["slug"]:(d["w"],d["h"]) for d in man["design"]}
+def T(key, tag="span", cls=""): de,en=C[key]; c=f' class="{cls}"' if cls else ""; return f'<{tag}{c} data-en="{e(en)}">{e(de)}</{tag}>'
+# featured tiles: slug, vertical, title, one-liner DE/EN, meta DE/EN
+tiles=[
+ ("race",0,"Nürburgring 24h","Nachtrennen im FNH-Anzug","Night race in the FNH suit","AI Film · 2026","AI film · 2026"),
+ ("kuppelkino",1,"Kuppelkino Stuttgart","3,4 Millionen Aufrufe","3.4 million views","AI Film · 2026","AI film · 2026"),
+ ("odyssai",0,"OdyssAI 2028","Abschlussfilm, acht Minuten","Graduation film, eight minutes","Film · 2026","Film · 2026"),
+ ("redbull",1,"Oma und die Red-Bull-Wand","4,3 Millionen Aufrufe","4.3 million views","AI Film · 2026","AI film · 2026"),
+ ("iceland",0,"Island, Feuer und Eis","Drohne, R5 und ein Vulkan","Drone, R5 and a volcano","Film · 2022","Film · 2022"),
+ ("husky",1,"Husky, Wasserpistole","737.000 Aufrufe","737,000 views","AI Film · 2026","AI film · 2026"),
+ ("cymatics",0,"Cymatics","Where sound meets vision","Where sound meets vision","Kurzfilm · 2025","Short film · 2025"),
+ ("singapur",1,"Studio Singapur","1,4 Millionen Aufrufe","1.4 million views","AI Film · 2026","AI film · 2026"),
 ]
-def plain(s): import re; return re.sub(r"<[^>]+>","",s)
-CH=[]
-for i,(s,v,tde,ten,mde,men,dde,den) in enumerate(chapters):
-    media=(f'<div class="ch__bg" style="background-image:url(assets/work/{s}.jpg)"></div><div class="ch__frame"><img src="assets/work/{s}.jpg" alt="" width="720" height="1280" loading="lazy"><video muted loop playsinline preload="none" poster="assets/work/{s}.jpg"><source data-src="assets/work/{s}-loop.mp4" type="video/mp4"></video></div>' if v else
-           f'<img src="assets/work/{s}.jpg" alt="" width="1280" height="720" loading="{"eager" if i==0 else "lazy"}"><video muted loop playsinline preload="none" poster="assets/work/{s}.jpg"><source data-src="assets/work/{s}-loop.mp4" type="video/mp4"></video>')
-    CH.append(f'''<article class="ch {'ch--v' if v else 'ch--h'}" data-title="{e(plain(tde))}" data-title-en="{e(plain(ten))}">
-  <div class="ch__media">{media}</div><div class="ch__shade"></div>
-  <div class="ch__text">
-    <div class="label"><span>( {i+1:02d} / {len(chapters):02d} )</span><span data-en="{e(men)}">{e(mde)}</span></div>
-    <h2 class="ch__title" data-en="{e(ten)}">{tde}</h2>
-    <p class="ch__desc" data-en="{e(den)}">{e(dde)}</p>
-    <button class="ch__link" data-open-video="assets/work/{s}.mp4" data-poster="assets/work/{s}.jpg" data-vertical="{v}" data-title="{e(plain(tde))}" data-title-en="{e(plain(ten))}" data-cursor="PLAY" data-cursor-en="PLAY"><span data-en="Watch with sound">Mit Ton ansehen</span></button>
-  </div>
-</article>''')
-CHAPTERS="\n".join(CH); BARS="".join('<i></i>' for _ in chapters)
-# ---- index rows (slug, src, poster, vertical, cat, year, title, one-liner DE, EN)
+def tile(i,t):
+    s,v,title,dde,den,mde,men=t
+    return f'''<figure class="tile {'tile--v' if v else 'tile--h'} t{i+1}" data-open-video="assets/work/{s}.mp4" data-poster="assets/work/{s}.jpg" data-vertical="{v}" data-title="{e(title)}" data-cursor="PLAY" data-cursor-en="PLAY" data-speed="{[1.06,0.9,1.02,0.86,1.08,0.92,1.04,0.88][i]}" tabindex="0" role="button">
+  <div class="tile__media"><img src="assets/work/{s}.jpg" alt="{e(title)}" loading="lazy" width="{720 if v else 1280}" height="{1280 if v else 720}"><video muted loop playsinline preload="none"><source data-src="assets/work/{s}-loop.mp4" type="video/mp4"></video></div>
+  <figcaption class="tile__cap"><span class="lbl">{i+1:02d}</span><span><b>{e(title)}</b><br><span data-en="{e(den)}">{e(dde)}</span></span><span class="mono" data-en="{e(men)}">{e(mde)}</span></figcaption>
+</figure>'''
+G1="\n".join(tile(i,t) for i,t in enumerate(tiles[:4])); G2="\n".join(tile(i+4,t) for i,t in enumerate(tiles[4:]))
 rows=[
  ("race","assets/work/race.mp4","assets/work/race.jpg",0,"ai","2026","Nürburgring 24h","Nachtrennen im FNH-Anzug, drei Teile","Night race in the FNH suit, three parts"),
  ("odyssai","assets/work/odyssai.mp4","assets/work/odyssai.jpg",0,"film","2026","OdyssAI 2028","Abschlussfilm, Trailer","Graduation film, trailer"),
@@ -62,18 +55,16 @@ rows=[
  ("die-bank","assets/film/die-bank.mp4","assets/film/die-bank.jpg",0,"film","2024","Die Bank","Kurzfilm, komplett auf dem Smartphone","Short film, shot entirely on a phone"),
  ("basketball","assets/film/basketball.mp4","assets/film/basketball.jpg",0,"film","2026","Basketball","3D-Tracking und Compositing","3D tracking and compositing"),
 ]
-ROWS="\n".join(f'''<div class="row" data-cat="{cat}" data-open-video="{src}" data-poster="{poster}" data-vertical="{v}" data-title="{e(t)}" data-cursor="PLAY" data-cursor-en="PLAY" tabindex="0" role="button">
-  <span class="row__num">{i+1:02d}</span><span class="row__title">{e(t)}</span><span class="row__desc" data-en="{e(den)}">{e(dde)}</span><span class="row__cat" data-en="{'AI film' if cat=='ai' else 'Film'}">{'AI Film' if cat=='ai' else 'Film'}</span><span class="row__year">{y}</span>
-</div>''' for i,(s,src,poster,v,cat,y,t,dde,den) in enumerate(rows))
-# ---- photos (slug, caption DE, EN)
-photos=[("iceland-lava-01","Island, 2021","Iceland, 2021"),("rimlight-01","Studio","Studio"),("subway-orange","U-Bahn","Subway"),("iceland-plane","Island, 2021","Iceland, 2021"),("projection-01","Projektion","Projection"),("seychelles-bay","Seychellen, 2021","Seychelles, 2021"),("portrait-tattoo","Porträt","Portrait"),("aurora","Island, 2022","Iceland, 2022"),("fashion-02","Werkschau, 2025","Werkschau, 2025"),("iceland-road","Island, 2021","Iceland, 2021"),("neon-02","Neon, 2020","Neon, 2020"),("vestrahorn","Island, 2022","Iceland, 2022"),("gym","Gym","Gym"),("seychelles-rocks","Seychellen, 2021","Seychelles, 2021"),("blitzlicht","Studio","Studio"),("iceland-waterfall","Island, 2021","Iceland, 2021"),("street-light","Nacht","Night"),("studio-01","Studio","Studio")]
-PH=[]
-for i,(s,cde,cen) in enumerate(photos):
-    w,h=dims[s]; cls="pic--l" if w>=h else "pic--p"
-    PH.append(f'''<figure class="pic {cls}" data-open-image="assets/photo/{s}.jpg" data-title="{e(cde)}" data-title-en="{e(cen)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button"><img src="assets/photo/{s}-t.jpg" alt="{e(cde)}" data-en-alt="{e(cen)}" loading="lazy" width="{w}" height="{h}"><figcaption><span data-en="{e(cen)}">{e(cde)}</span><span>{i+1:02d}</span></figcaption></figure>''')
-PHOTOS="\n".join(PH)
-design=[("ayvo","Ayvo","Packaging","Packaging"),("lazi-kampagne","LAZI Akademie","Kampagne","Campaign"),("cymatics","Cymatics","Plakat","Poster"),("finnison-ci","FINNISON","Corporate Design","Corporate design"),("freshy","Freshy","Packaging","Packaging"),("last-exit","Last Exit","Plakat-Redesign","Poster redesign"),("buchcover","Stimmen im Kopf","Buchcover","Book cover"),("nature-one","Nature One","Plakat, Konzept","Poster, concept"),("porsche","GT3 RS","Composite","Composite"),("wwf","WWF","Kampagne, Konzept","Campaign, concept")]
-DESIGN="\n".join(f'''<figure class="dcard{' dcard--wide' if ddims[s][0]>ddims[s][1]*1.15 else ''}" data-open-image="assets/design/{s}.jpg" data-title="{e(t)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button" data-reveal><img src="assets/design/{s}-t.jpg" alt="{e(t)}, {e(kde)}" data-en-alt="{e(t)}, {e(ken)}" loading="lazy" width="{ddims[s][0]}" height="{ddims[s][1]}"><figcaption><b>{e(t)}</b><span data-en="{e(ken)}">{e(kde)}</span></figcaption></figure>''' for s,t,kde,ken in design)
+ROWS="\n".join(f'''<div class="row" data-cat="{cat}" data-open-video="{src}" data-poster="{poster}" data-vertical="{v}" data-title="{e(t)}" data-cursor="PLAY" data-cursor-en="PLAY" tabindex="0" role="button"><span class="row__num">{i+1:02d}</span><span class="row__title">{e(t)}</span><span class="row__desc" data-en="{e(den)}">{e(dde)}</span><span class="row__cat" data-en="{'AI film' if cat=='ai' else 'Film'}">{'AI Film' if cat=='ai' else 'Film'}</span><span class="row__year">{y}</span></div>''' for i,(s,src,poster,v,cat,y,t,dde,den) in enumerate(rows))
+photos=[("iceland-lava-01","Island, 2021","Iceland, 2021"),("rimlight-01","Studio","Studio"),("subway-orange","U-Bahn","Subway"),("iceland-plane","Island, 2021","Iceland, 2021"),("projection-01","Projektion","Projection"),("seychelles-bay","Seychellen, 2021","Seychelles, 2021"),("aurora","Island, 2022","Iceland, 2022"),("portrait-tattoo","Porträt","Portrait"),("fashion-02","Werkschau, 2025","Werkschau, 2025"),("vestrahorn","Island, 2022","Iceland, 2022"),("neon-02","Neon, 2020","Neon, 2020"),("iceland-road","Island, 2021","Iceland, 2021")]
+speeds=[1.05,0.9,1.08,0.95,1.1,0.88,1.03,0.92,1.06,0.9,1.04,0.94]
+PHOTOS="\n".join(f'''<figure class="pic p{i+1}" data-open-image="assets/photo/{s}.jpg" data-title="{e(cde)}" data-title-en="{e(cen)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" data-speed="{speeds[i]}" tabindex="0" role="button"><img src="assets/photo/{s}-t.jpg" alt="{e(cde)}" data-en-alt="{e(cen)}" loading="lazy" width="{dims[s][0]}" height="{dims[s][1]}"><figcaption><span data-en="{e(cen)}">{e(cde)}</span><span>{i+1:02d}</span></figcaption></figure>''' for i,(s,cde,cen) in enumerate(photos))
+design=[("ayvo","Ayvo","Packaging","Packaging"),("lazi-kampagne","LAZI Akademie","Kampagne","Campaign"),("cymatics","Cymatics","Plakat","Poster"),("freshy","Freshy","Packaging","Packaging"),("last-exit","Last Exit","Plakat","Poster")]
+DESIGN="\n".join(f'''<figure class="dcard" data-open-image="assets/design/{s}.jpg" data-title="{e(t)}" data-cursor="ÖFFNEN" data-cursor-en="OPEN" tabindex="0" role="button" data-reveal><img src="assets/design/{s}-t.jpg" alt="{e(t)}, {e(kde)}" data-en-alt="{e(t)}, {e(ken)}" loading="lazy" width="{ddims[s][0]}" height="{ddims[s][1]}"><figcaption><b>{e(t)}</b><span data-en="{e(ken)}">{e(kde)}</span></figcaption></figure>''' for s,t,kde,ken in design)
 tpl=open(f"{ROOT}/scripts/index.template.html",encoding="utf-8").read()
-out=tpl.replace("{{CHAPTERS}}",CHAPTERS).replace("{{BARS}}",BARS).replace("{{ROWS}}",ROWS).replace("{{PHOTOS}}",PHOTOS).replace("{{DESIGN}}",DESIGN).replace("{{NROWS}}",str(len(rows)))
+tpl=re.sub(r"\{\{C:([a-z0-9_]+)\}\}", lambda m: T(m.group(1)), tpl)
+tpl=re.sub(r"\{\{CDE:([a-z0-9_]+)\}\}", lambda m: e(C[m.group(1)][0]), tpl)
+tpl=re.sub(r"\{\{CEN:([a-z0-9_]+)\}\}", lambda m: e(C[m.group(1)][1]), tpl)
+logo=open(f"{ROOT}/site/assets/img/fnh-logo.svg").read().replace('<svg ','<svg focusable="false" ',1)
+out=tpl.replace("{{LOGO}}",logo).replace("{{TILES1}}",G1).replace("{{TILES2}}",G2).replace("{{ROWS}}",ROWS).replace("{{NROWS}}",str(len(rows))).replace("{{PHOTOS}}",PHOTOS).replace("{{DESIGN}}",DESIGN)
 open(f"{ROOT}/site/index.html","w",encoding="utf-8").write(out); print("index.html",len(out),"bytes")
