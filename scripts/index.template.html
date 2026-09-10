@@ -33,22 +33,28 @@
   <a href="#work"><span data-en="Work">Arbeiten</span><small>01</small></a><a href="#index"><span>Index</span><small>02</small></a><a href="#photo"><span data-en="Photo">Foto</span><small>03</small></a><a href="#studio"><span>Studio</span><small>04</small></a><a href="#contact"><span data-en="Contact">Kontakt</span><small>05</small></a>
 </div>
 <main id="top">
-<section class="hero light" id="hero">
-  <div class="hero__kicker lbl">{{C:hero_kicker}}</div>
-  <h1 class="hero__logo" aria-label="FNH"><span class="mask">{{LOGO}}</span></h1>
-  <div class="hero__foot">
-    <p class="mono">{{C:hero_line}}</p>
-    <div class="socials"><a class="mono" href="https://www.instagram.com/finn_hafemann/" target="_blank" rel="noopener">Instagram</a><a class="mono" href="https://www.tiktok.com/@finnisonline" target="_blank" rel="noopener">TikTok</a><a class="hero__cta" href="#work">{{C:hero_cta}} <span class="arr">→</span></a></div>
+<section class="opener" id="hero">
+  <div class="opener__stage">
+    <div class="opener__type">
+      <div class="lbl">{{C:hero_kicker}}</div>
+      <h1 class="opener__h1" data-split data-intro>{{C:stmt_head}}</h1>
+    </div>
+    <div class="opener__media">
+      <img src="assets/hero/hero-desktop.jpg" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+      <video muted loop playsinline preload="none" aria-hidden="true"><source data-src="assets/hero/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)"><source data-src="assets/hero/hero-desktop.mp4" type="video/mp4"></video>
+    </div>
+    <div class="opener__foot">
+      <p class="mono">{{C:hero_line}}</p>
+      <div class="socials"><a class="mono" href="https://www.instagram.com/finn_hafemann/" target="_blank" rel="noopener">Instagram</a><a class="mono" href="https://www.tiktok.com/@finnisonline" target="_blank" rel="noopener">TikTok</a><span class="mono opener__scroll"><i></i>Scroll</span></div>
+    </div>
+    <div class="opener__cap">
+      <span class="lbl">{{C:reel_label}}</span>
+      <span class="mono">{{C:reel_title}}</span>
+    </div>
   </div>
 </section>
 <section class="section light" id="approach">
-  <h2 class="stmt" data-split>{{C:stmt_head}}</h2>
-  <div class="row2"><div class="lbl">{{C:stmt_label}}</div><p>{{C:stmt_text}}</p></div>
-</section>
-<section class="reel" id="reel">
-  <div class="reel__media"><img src="assets/hero/hero-desktop.jpg" alt="" width="1600" height="900" loading="lazy"><video muted loop playsinline preload="none"><source data-src="assets/hero/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)"><source data-src="assets/hero/hero-desktop.mp4" type="video/mp4"></video></div>
-  <div class="reel__pill">{{C:reel_label}}</div>
-  <div class="reel__cap"><div><span class="lbl">( Showreel )</span><b>{{C:reel_title}}</b></div></div>
+  <div class="row2" style="margin-top:0"><div class="lbl">{{C:stmt_label}}</div><p>{{C:stmt_text}}</p></div>
 </section>
 <section class="section dark works" id="work">
   <div class="works__head"><div class="lbl">{{C:works_label}}</div><span class="mono">( 08 )</span></div>
@@ -99,7 +105,7 @@
   <div class="studio__top"><div class="lbl">{{C:studio_label}}</div><p>{{C:studio_text}}</p></div>
   <div class="studio__mid">
     <div class="studio__img"><img src="assets/img/finn-portrait.jpg" alt="Finn Hafemann" width="1073" height="1600" loading="lazy"></div>
-    <div class="facts" data-reveal><div>{{C:gear_cam|b}}{{C:gear_cam_v}}</div><div>{{C:gear_lens|b}}{{C:gear_lens_v}}</div><div>{{C:gear_air|b}}{{C:gear_air_v}}</div><div>{{C:gear_post|b}}{{C:gear_post_v}}</div><div>{{C:gear_cert|b}}{{C:gear_cert_v}}</div><div>{{C:gear_base|b}}{{C:gear_base_v}}</div></div>
+    <div class="facts" data-anim><div>{{C:gear_cam|b}}{{C:gear_cam_v}}</div><div>{{C:gear_lens|b}}{{C:gear_lens_v}}</div><div>{{C:gear_air|b}}{{C:gear_air_v}}</div><div>{{C:gear_post|b}}{{C:gear_post_v}}</div><div>{{C:gear_cert|b}}{{C:gear_cert_v}}</div><div>{{C:gear_base|b}}{{C:gear_base_v}}</div></div>
   </div>
   <h2 class="stmt studio__stmt" data-split>{{C:studio_stmt}}</h2>
 </section>
