@@ -20,7 +20,7 @@
     $$('[data-split]').forEach(el => {
       if (el._tw) { el._tw.scrollTrigger && el._tw.scrollTrigger.kill(); el._tw.kill(); el._tw = null; }
       const words = el.textContent.trim().split(/\s+/); el.innerHTML = words.map(w => `<span class="w"><span>${w}</span></span>`).join(' ');
-      if (reduce || !hasGsap) return;
+      if (reduce || !hasGsap || el.hasAttribute('data-intro')) return;
       const inner = $$('.w > span', el); gsap.set(inner, { yPercent: 110 });
       el._tw = gsap.to(inner, { yPercent: 0, duration: 1, ease: 'power4.out', stagger: 0.025, scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
     });
@@ -47,25 +47,46 @@
     gsap.ticker.add(() => { rx += (x - rx) * 0.22; ry += (y - ry) * 0.22; cur.style.transform = `translate3d(${rx}px,${ry}px,0)`; });
     $$('[data-cursor]').forEach(el => { el.addEventListener('mouseenter', () => { label.textContent = lang === 'en' && el.dataset.cursorEn ? el.dataset.cursorEn : el.dataset.cursor; cur.classList.add('is-hover'); }); el.addEventListener('mouseleave', () => cur.classList.remove('is-hover')); });
   }
-  /* hero */
-  if (hasGsap && !reduce) {
-    gsap.from('.hero__logo', { yPercent: 18, opacity: 0, duration: 1.6, ease: 'power4.out', delay: 0.2 });
-    gsap.from(['.hero__kicker', '.hero__foot'], { opacity: 0, y: 12, duration: 1.1, ease: 'power3.out', stagger: 0.12, delay: 0.9 });
-    gsap.fromTo('.hero__logo', { y: 0, opacity: 1 }, { y: -120, opacity: 0.15, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+  /* opener: the video frame grows to full bleed while the statement leaves */
+  const openerMedia = $('.opener__media');
+  if (openerMedia && hasGsap && !reduce) {
+    gsap.from('.opener__type .w > span', { yPercent: 110, duration: 1.2, ease: 'power4.out', stagger: 0.035, delay: 0.15 });
+    gsap.from(['.opener__type .lbl', '.opener__foot'], { opacity: 0, y: 12, duration: 1, ease: 'power3.out', stagger: 0.1, delay: 0.5 });
+    const mm = gsap.matchMedia();
+    const build = shut => () => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: '.opener__stage', start: 'top top', end: '+=115%', pin: true, scrub: 0.4, anticipatePin: 1, invalidateOnRefresh: true } });
+      tl.fromTo(openerMedia, { clipPath: shut }, { clipPath: 'inset(0vh 0vw 0vh 0vw)', ease: 'none', duration: 1, immediateRender: false }, 0)
+        .fromTo('.opener__type', { y: 0, opacity: 1 }, { y: -70, opacity: 0, ease: 'power2.in', duration: 0.34, immediateRender: false }, 0)
+        .fromTo('.opener__foot', { y: 0, opacity: 1 }, { y: 34, opacity: 0, ease: 'power2.in', duration: 0.3, immediateRender: false }, 0)
+        .fromTo('.opener__cap', { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.22, immediateRender: false }, 0.76);
+      return () => tl.scrollTrigger && tl.scrollTrigger.kill();
+    };
+    mm.add('(min-width: 900px)', build('inset(19vh 4vw 19vh 52vw)'));
+    mm.add('(max-width: 899px)', build('inset(52vh 5vw 14vh 5vw)'));
+  } else if (openerMedia) {
+    openerMedia.style.clipPath = 'inset(0)';
   }
+
   /* videos: attach lazily + play in view */
   const attach = v => { if (v.dataset.ready) return; $$('source[data-src]', v).forEach(s => s.src = s.dataset.src); v.load(); v.dataset.ready = '1'; };
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(en => { const wrap = en.target, v = $('video', wrap); if (!v) return; if (en.isIntersecting) { attach(v); v.play().then(() => wrap.classList.add('is-live')).catch(() => {}); } else { v.pause(); wrap.classList.remove('is-live'); } }), { threshold: 0.25 }) : null;
+  $$('.opener__media').forEach(m => { if (!reduce && io) io.observe(m); });
   $$('.reel').forEach(r => { if (reduce) return; io && io.observe(r); if (hasGsap) gsap.fromTo($('.reel__media', r), { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: r, start: 'top bottom', end: 'top top', scrub: true } }); });
   /* tiles */
   const tiles = $$('.tile');
   tiles.forEach(t => { const v = $('video', t); if (fine) { t.addEventListener('mouseenter', () => { attach(v); v.play().then(() => t.classList.add('is-playing')).catch(() => {}); }); t.addEventListener('mouseleave', () => { v.pause(); t.classList.remove('is-playing'); }); } });
   if (!fine && 'IntersectionObserver' in window) { const tio = new IntersectionObserver(es => es.forEach(en => { const t = en.target, v = $('video', t); if (en.intersectionRatio >= 0.6) { attach(v); v.play().then(() => t.classList.add('is-playing')).catch(() => {}); } else { v.pause(); t.classList.remove('is-playing'); } }), { threshold: [0, 0.6] }); tiles.forEach(t => tio.observe(t)); }
-  /* reveals + parallax */
+  /* reveals: CSS transition driven by IntersectionObserver, so content is never trapped invisible */
+  const anims = $$('[data-anim]');
+  if (anims.length && !reduce && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-anim');
+    let group = null, gi = 0;
+    anims.forEach(el => { const p = el.parentElement; if (p !== group) { group = p; gi = 0; } el.style.transitionDelay = Math.min(gi++, 8) * 0.045 + 's'; });
+    const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); rio.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+    anims.forEach(el => rio.observe(el));
+    setTimeout(() => anims.forEach(el => { if (el.getBoundingClientRect().top < innerHeight) el.classList.add('is-in'); }), 1200);
+  }
   if (hasGsap && !reduce) {
-    $$('[data-reveal]').forEach(el => gsap.from(el, { y: 28, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%', once: true } }));
-    $$('.tile, .pic').forEach(el => gsap.from(el, { y: 40, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 94%', once: true } }));
-    const rowsEl = $('.rows'); rowsEl && gsap.from('.rows .row', { opacity: 0, y: 10, duration: .6, ease: 'power2.out', stagger: 0.025, scrollTrigger: { trigger: rowsEl, start: 'top 85%', once: true } });
     gsap.matchMedia().add('(min-width: 900px)', () => {
       $$('[data-speed]').forEach(el => { const s = parseFloat(el.dataset.speed) || 1, amp = 160; gsap.fromTo(el, { y: (s - 1) * amp }, { y: -(s - 1) * amp, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } }); });
     });
