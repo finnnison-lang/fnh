@@ -56,8 +56,8 @@
   "OdyssAI 2028"
  ],
  "inter2_meta": [
-  "Abschlussfilm · 2026 · Trailer",
-  "Graduation film · 2026 · trailer"
+  "Abschlussfilm · 2026 · 8:00",
+  "Graduation film · 2026 · 8:00"
  ],
  "watch": [
   "Mit Ton ansehen",
@@ -178,5 +178,13 @@
  "studio_portrait_cap": [
   "Nachtporträt",
   "Night portrait"
+ ],
+ "watch_trailer": [
+  "Trailer ansehen",
+  "Watch trailer"
+ ],
+ "watch_full": [
+  "Ganzer Film auf YouTube",
+  "Full film on YouTube"
  ]
 }

@@ -78,6 +78,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .reel__cap .lbl{color:var(--neon-dark)}
 .reel__btn{font-family:var(--fm);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--neon-dark);padding-bottom:5px;display:inline-flex;gap:8px;align-items:center;color:var(--white)}
 .reel__btn::before{content:'';border-left:7px solid var(--neon-dark);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+.reel__acts{display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap}
+.reel__btn--out::before{content:'↗';border:0;color:var(--neon-dark);font-size:13px;line-height:1;transform:translateY(1px)}
+.reel__btn:hover{border-bottom-color:var(--white)}
 /* works grid */
 .works{padding-bottom:clamp(60px,10vh,120px)}
 .works+.works,.works+#series{padding-top:0}

@@ -8,7 +8,7 @@ def T(key, tag="span", cls=""): de,en=C[key]; c=f' class="{cls}"' if cls else ""
 tiles=[
  ("race",0,"Nürburgring 24h","Nachtrennen im FNH-Anzug","Night race in the FNH suit","AI Film · 2026","AI film · 2026"),
  ("kuppelkino",1,"Kuppelkino Stuttgart","3,4 Millionen Aufrufe","3.4 million views","AI Film · 2026","AI film · 2026"),
- ("odyssai",0,"OdyssAI 2028","Abschlussfilm, acht Minuten","Graduation film, eight minutes","Film · 2026","Film · 2026"),
+ ("odyssai",0,"OdyssAI 2028","Abschlussfilm, acht Minuten","Graduation film, eight minutes","Film · 2026 · 8:00","Film · 2026 · 8:00"),
  ("redbull",1,"Oma und die Red-Bull-Wand","4,3 Millionen Aufrufe","4.3 million views","AI Film · 2026","AI film · 2026"),
  ("iceland",0,"Island, Feuer und Eis","Drohne, R5 und ein Vulkan","Drone, R5 and a volcano","Film · 2022","Film · 2022"),
  ("husky",1,"Husky, Wasserpistole","737.000 Aufrufe","737,000 views","AI Film · 2026","AI film · 2026"),
@@ -24,7 +24,7 @@ def tile(i,t):
 G1="\n".join(tile(i,t) for i,t in enumerate(tiles[:4])); G2="\n".join(tile(i+4,t) for i,t in enumerate(tiles[4:]))
 rows=[
  ("race","assets/work/race.mp4","assets/work/race.jpg",0,"ai","2026","Nürburgring 24h","Nachtrennen im FNH-Anzug, drei Teile","Night race in the FNH suit, three parts"),
- ("odyssai","assets/work/odyssai.mp4","assets/work/odyssai.jpg",0,"film","2026","OdyssAI 2028","Abschlussfilm, Trailer","Graduation film, trailer"),
+ ("odyssai","assets/work/odyssai.mp4","assets/work/odyssai.jpg",0,"film","2026","OdyssAI 2028","Abschlussfilm, acht Minuten, ganzer Film auf YouTube","Graduation film, eight minutes, full film on YouTube"),
  ("iceland","assets/work/iceland.mp4","assets/work/iceland.jpg",0,"film","2022","Island, Feuer und Eis","Drohne, R5 und ein Vulkan","Drone, R5 and a volcano"),
  ("redbull","assets/work/redbull.mp4","assets/work/redbull.jpg",1,"ai","2026","Oma und die Red-Bull-Wand","CCTV, 4,3 Millionen Aufrufe","CCTV, 4.3 million views"),
  ("kuppelkino","assets/work/kuppelkino.mp4","assets/work/kuppelkino.jpg",1,"ai","2026","Kuppelkino Stuttgart","Die Leinwand splittert, 3,4 Millionen","The screen shatters, 3.4 million"),
